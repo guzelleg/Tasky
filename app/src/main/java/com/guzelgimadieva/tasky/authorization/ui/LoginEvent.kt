@@ -10,9 +10,7 @@ sealed interface LoginEvent {
        val password: String
     ) : LoginEvent
 
-    data class PasswordVisibilityChanged(
-        val isPasswordVisible: Boolean
-    ) : LoginEvent
+    data object PasswordVisibilityChanged : LoginEvent
 
-    data class Login(val email: String, val password: String) : LoginEvent
+    data object Login : LoginEvent
 }
