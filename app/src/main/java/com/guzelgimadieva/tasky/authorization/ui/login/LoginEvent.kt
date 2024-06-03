@@ -1,4 +1,4 @@
-package com.guzelgimadieva.tasky.authorization.ui
+package com.guzelgimadieva.tasky.authorization.ui.login
 
 sealed interface LoginEvent {
 

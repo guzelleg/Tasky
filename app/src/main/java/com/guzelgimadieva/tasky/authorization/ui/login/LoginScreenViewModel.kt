@@ -1,4 +1,4 @@
-package com.guzelgimadieva.tasky.authorization.ui
+package com.guzelgimadieva.tasky.authorization.ui.login
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

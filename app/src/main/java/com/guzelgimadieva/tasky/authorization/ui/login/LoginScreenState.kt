@@ -1,4 +1,4 @@
-package com.guzelgimadieva.tasky.authorization.ui
+package com.guzelgimadieva.tasky.authorization.ui.login
 
 data class LoginScreenState(
     val email: String = "",

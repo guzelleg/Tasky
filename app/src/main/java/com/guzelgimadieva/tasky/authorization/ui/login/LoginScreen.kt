@@ -1,6 +1,6 @@
 @file:Suppress("PreviewMustBeTopLevelFunction")
 
-package com.guzelgimadieva.tasky.authorization.ui
+package com.guzelgimadieva.tasky.authorization.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -120,11 +119,12 @@ fun LoginScreenContent(
                     value = loginState.password,
                     onValueChange = { onAction(LoginEvent.PasswordChanged(it)) },
                     placeholder = { Text(stringResource(id = R.string.register_screen_password_input)) },
-                    visualTransformation = if (loginState.passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    visualTransformation = if (loginState.passwordVisible) VisualTransformation.None
+                        else PasswordVisualTransformation(),
                     trailingIcon = {
                         val image =
                             if (loginState.passwordVisible) Icons.Filled.Visibility else Icons.Default.VisibilityOff
-                        IconButton(onClick = { onAction(LoginEvent.PasswordVisibilityChanged(!loginState.passwordVisible)) }) {
+                        IconButton(onClick = { onAction(LoginEvent.PasswordVisibilityChanged) }) {
                             Icon(imageVector = image, contentDescription = null)
                         }
                     },
