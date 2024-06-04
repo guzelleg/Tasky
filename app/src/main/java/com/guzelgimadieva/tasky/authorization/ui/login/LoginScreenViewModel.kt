@@ -13,7 +13,7 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
     private val _loginState = MutableStateFlow(LoginScreenState())
     val loginState: StateFlow<LoginScreenState> = _loginState.asStateFlow()
 
-    private fun onEvent(event: LoginEvent) {
+    fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EmailChanged -> {
                 _loginState.update { _loginState.value.copy(email = event.email) }
@@ -28,9 +28,5 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
                 // TODO: Implement login logic
             }
         }
-    }
-
-    fun sendEvent(event: LoginEvent) {
-        onEvent(event)
     }
 }
