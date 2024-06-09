@@ -1,8 +1,8 @@
 plugins {
-    id ("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -61,10 +61,11 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose-android:2.8.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
@@ -75,6 +76,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-text-google-fonts:1.6.7")
 
     implementation("com.google.dagger:hilt-android:2.49")
-    kapt("com.google.dagger:hilt-android-compiler:2.47")
+    ksp("com.google.dagger:hilt-android-compiler:2.47")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation ("androidx.navigation:navigation-compose:2.7.7")
 }
