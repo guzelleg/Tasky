@@ -16,19 +16,20 @@ class RegisterScreenViewModel @Inject constructor() : ViewModel() {
     fun onEvent(event: RegisterEvent) {
         when (event) {
             is RegisterEvent.UsernameChanged -> {
-                _registerState.update { _registerState.value.copy(username = event.username) }
+                _registerState.update { it.copy(username = event.username) }
             }
             is RegisterEvent.EmailChanged -> {
-                _registerState.update { _registerState.value.copy(email = event.email) }
+                _registerState.update { it.copy(email = event.email) }
             }
             is RegisterEvent.PasswordChanged -> {
-                _registerState.update { _registerState.value.copy(password = event.password) }
+                _registerState.update {
+                    it.copy(password = event.password) }
             }
             is RegisterEvent.PasswordVisibilityChanged -> {
-                _registerState.update { _registerState.value.copy(
-                    passwordVisible = !_registerState.value.passwordVisible) }
+                _registerState.update { it.copy(
+                    passwordVisible = !it.passwordVisible) }
             }
-            is RegisterEvent.ReisterClicked -> {} // TODO: Implement register logic
+            is RegisterEvent.RegisterClicked -> {} // TODO: Implement register logic
         }
     }
 }

@@ -14,6 +14,6 @@ sealed interface RegisterEvent {
     ) : RegisterEvent
     data object PasswordVisibilityChanged : RegisterEvent
 
-    data object ReisterClicked : RegisterEvent
+    data object RegisterClicked : RegisterEvent
 
 }

@@ -25,6 +25,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.guzelgimadieva.tasky.R
 import com.guzelgimadieva.tasky.authorization.ui.components.InputTextField
 
@@ -49,7 +51,7 @@ fun RegisterScreen(
     onBackClick: () -> Unit,
 ) {
     val viewModel: RegisterScreenViewModel = hiltViewModel()
-    val registerState by viewModel.registerState.collectAsState()
+    val registerState by viewModel.registerState.collectAsStateWithLifecycle()
     RegisterScreenContent(
         onAction = viewModel::onEvent,
         registerState = registerState,
@@ -103,7 +105,7 @@ fun RegisterScreenContent (
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.register_screen_name_input),
-                            style = TextStyle(color = Color.Black.copy(alpha = 0.5f))
+                            style = TextStyle(color =  LocalTextStyle.current.color.copy(alpha = 0.5f))
                         )
                     },
                     visualTransformation = VisualTransformation.None,

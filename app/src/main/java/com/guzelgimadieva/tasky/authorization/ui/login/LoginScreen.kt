@@ -43,36 +43,23 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.guzelgimadieva.tasky.R
 import com.guzelgimadieva.tasky.authorization.ui.components.InputTextField
 import com.guzelgimadieva.tasky.authorization.ui.register.RegisterScreen
 import com.guzelgimadieva.tasky.core.theme.TaskyAppLightGray
 import com.guzelgimadieva.tasky.core.theme.TaskyAppPurple
 
-@Composable
-fun LoginScreen(
-    onRegisterClick: () -> Unit,
-) {
-    val viewModel: LoginScreenViewModel = hiltViewModel()
-    val loginState by viewModel.loginState.collectAsState()
-    LoginScreenContent(
-        onAction = viewModel::onEvent,
-        loginState = loginState,
-        onRegisterClick = onRegisterClick,
-    )
-}
 
 @Composable
-fun AppNavHost(
-    navController: NavHostController,
-    startDestination: String = AuthScreen.LOGIN.name,
+fun AuthorizationScreen(
 ) {
+    val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = AuthScreen.LOGIN.name,
     ) {
         composable(AuthScreen.LOGIN.name) {
             LoginScreen(
@@ -89,6 +76,19 @@ fun AppNavHost(
             )
         }
     }
+}
+
+@Composable
+fun LoginScreen(
+    onRegisterClick: () -> Unit,
+) {
+    val viewModel: LoginScreenViewModel = hiltViewModel()
+    val loginState by viewModel.loginState.collectAsState()
+    LoginScreenContent(
+        onAction = viewModel::onEvent,
+        loginState = loginState,
+        onRegisterClick = onRegisterClick,
+    )
 }
 
 @Composable
