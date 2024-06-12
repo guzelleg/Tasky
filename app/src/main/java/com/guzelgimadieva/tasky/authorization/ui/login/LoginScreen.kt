@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -49,6 +50,7 @@ import androidx.navigation.compose.rememberNavController
 import com.guzelgimadieva.tasky.R
 import com.guzelgimadieva.tasky.authorization.ui.components.InputTextField
 import com.guzelgimadieva.tasky.authorization.ui.register.RegisterScreen
+import com.guzelgimadieva.tasky.core.theme.TaskyAppGreen
 import com.guzelgimadieva.tasky.core.theme.TaskyAppLightGray
 import com.guzelgimadieva.tasky.core.theme.TaskyAppPurple
 
@@ -146,6 +148,12 @@ fun LoginScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 32.dp),
+                    trailingIcon = {
+                        if (loginState.emailValid)
+                            Icon(imageVector = Icons.Filled.Check,
+                                tint = TaskyAppGreen,
+                                contentDescription = null)
+                    },
                 )
 
                 InputTextField(
@@ -174,7 +182,7 @@ fun LoginScreenContent(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
-                    onClick = { /* TODO Handle sign up action */ },
+                    onClick = { onAction(LoginEvent.Login)},
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp),
