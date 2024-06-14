@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -42,6 +43,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.guzelgimadieva.tasky.R
 import com.guzelgimadieva.tasky.authorization.ui.components.InputTextField
+import com.guzelgimadieva.tasky.core.theme.TaskyAppGray
+import com.guzelgimadieva.tasky.core.theme.TaskyAppGreen
 
 @Composable
 fun RegisterScreen(
@@ -98,7 +101,7 @@ fun RegisterScreenContent (
             ) {
                 InputTextField(
                     value = registerState.username,
-                    onValueChange = { onAction(RegisterEvent.EmailChanged(it)) },
+                    onValueChange = { onAction(RegisterEvent.UsernameChanged(it)) },
                     placeholder = {
                         Text(
                             text = stringResource(id = R.string.register_screen_name_input),
@@ -109,6 +112,12 @@ fun RegisterScreenContent (
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 32.dp),
+                    trailingIcon = {
+                        if (registerState.usernameValid)
+                            Icon(imageVector = Icons.Filled.Check,
+                                tint = TaskyAppGreen,
+                                contentDescription = null)
+                    },
                 )
 
                 InputTextField(
@@ -124,6 +133,12 @@ fun RegisterScreenContent (
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
+                    trailingIcon = {
+                        if (registerState.emailValid)
+                            Icon(imageVector = Icons.Filled.Check,
+                                tint = TaskyAppGreen,
+                                contentDescription = null)
+                    },
                 )
 
                 InputTextField(
@@ -152,7 +167,7 @@ fun RegisterScreenContent (
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Button(
-                    onClick = { /* TODO Handle register action */ },
+                    onClick = {onAction(RegisterEvent.RegisterClicked)},
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp),

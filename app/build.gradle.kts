@@ -1,8 +1,11 @@
+import java.util.Properties
+
 plugins {
     id("com.google.dagger.hilt.android")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("kotlinx-serialization")
 }
 
 android {
@@ -20,6 +23,14 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField(
+            type = "String",
+            name = "API_KEY",
+            value = "\"${properties.getProperty("API_KEY")}\""
+        )
     }
 
     buildTypes {
@@ -40,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -61,10 +73,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation ("androidx.navigation:navigation-compose:2.7.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
@@ -77,5 +89,10 @@ dependencies {
     ksp("com.google.dagger:hilt-android-compiler:2.47")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation ("androidx.navigation:navigation-compose:2.7.7")
+    val ktorVersion = "2.3.11"
+    implementation ("io.ktor:ktor-client-core:$ktorVersion")
+    implementation ("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation ("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation ("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation ("io.ktor:ktor-client-logging:$ktorVersion")
 }
