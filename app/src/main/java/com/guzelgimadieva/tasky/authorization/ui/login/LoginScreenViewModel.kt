@@ -22,6 +22,8 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
     private val _loginState = MutableStateFlow(LoginScreenState())
     val loginState: StateFlow<LoginScreenState> = _loginState.asStateFlow()
     private val service = TaskyServiceImpl()
+    private val _refreshToken = MutableStateFlow<String?>(null)
+    val refreshToken: StateFlow<String?> = _refreshToken.asStateFlow()
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -55,7 +57,7 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
                 _loginState.value.password
             )
         ).onSuccess {
-            //TODO handle success
+            _refreshToken.emit(it.refreshToken)
         }.onError { error ->
             if (error is DataError) {
                 _loginState.update { it.copy(errorMessage = error.toUiText()) }

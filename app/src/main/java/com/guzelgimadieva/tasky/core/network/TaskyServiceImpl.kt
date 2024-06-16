@@ -1,8 +1,11 @@
 package com.guzelgimadieva.tasky.core.network
+import android.net.http.HttpResponseCache.install
 import com.guzelgimadieva.tasky.core.data.remote.model.LoginRequest
 import com.guzelgimadieva.tasky.core.data.remote.model.LoginResponse
 import com.guzelgimadieva.tasky.core.data.remote.model.RegisterRequest
 import com.guzelgimadieva.tasky.BuildConfig
+import com.guzelgimadieva.tasky.core.data.remote.model.AccessTokenRequest
+import com.guzelgimadieva.tasky.core.data.remote.model.AccessTokenResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
@@ -22,6 +25,7 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.Response
+import java.util.logging.Logger
 import kotlin.coroutines.cancellation.CancellationException
 
 class TaskyServiceImpl: TaskyService {
@@ -55,6 +59,14 @@ class TaskyServiceImpl: TaskyService {
        return safeCall {
             client.post(HttpRoutes.LOGIN){
                 setBody(loginRequest)
+            }
+        }
+    }
+
+    override suspend fun accessToken(accessTokenRequest: AccessTokenRequest): Result<AccessTokenResponse, Error> {
+        return safeCall {
+            client.post(HttpRoutes.ACCESS_TOKEN){
+                setBody(accessTokenRequest)
             }
         }
     }

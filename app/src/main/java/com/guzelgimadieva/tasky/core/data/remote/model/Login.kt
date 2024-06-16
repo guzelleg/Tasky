@@ -17,5 +17,17 @@ data class LoginRequest(
     val password: String
 )
 
+@Serializable
+data class AccessTokenRequest(
+    val refreshToken: String,
+    val userId: String,
+)
+
+@Serializable
+data class AccessTokenResponse(
+    val accessToken: String,
+    val accessTokenExpirationTimestamp: Long,
+)
+
 
 

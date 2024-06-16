@@ -2,6 +2,7 @@
 
 package com.guzelgimadieva.tasky.authorization.ui.login
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -84,8 +86,16 @@ fun AuthorizationScreen(
 fun LoginScreen(
     onRegisterClick: () -> Unit,
 ) {
+
     val viewModel: LoginScreenViewModel = hiltViewModel()
     val loginState by viewModel.loginState.collectAsState()
+
+    val refreshToken = viewModel.refreshToken.collectAsState()
+    val context = LocalContext.current
+    val storedRefreshToken = context.getSharedPreferences(
+        context.getString(R.string.stored_access_token),
+        Context.MODE_PRIVATE)
+
     LoginScreenContent(
         onAction = viewModel::onEvent,
         loginState = loginState,
