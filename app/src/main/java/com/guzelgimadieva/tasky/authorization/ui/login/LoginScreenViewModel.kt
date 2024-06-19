@@ -10,9 +10,11 @@ import com.guzelgimadieva.tasky.core.network.TaskyServiceImpl
 import com.guzelgimadieva.tasky.core.network.onError
 import com.guzelgimadieva.tasky.core.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,8 +24,12 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
     private val _loginState = MutableStateFlow(LoginScreenState())
     val loginState: StateFlow<LoginScreenState> = _loginState.asStateFlow()
     private val service = TaskyServiceImpl()
-    private val _refreshToken = MutableStateFlow<String?>(null)
-    val refreshToken: StateFlow<String?> = _refreshToken.asStateFlow()
+
+    private val _refreshToken = Channel<String?>()
+    val refreshToken = _refreshToken.receiveAsFlow()
+
+    private val _userId = Channel<String>()
+    val userId = _userId.receiveAsFlow()
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -44,7 +50,6 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
             is LoginEvent.Login -> {
                 viewModelScope.launch {
                     sendLogin()
-                    //TODO use response and check if token is null
                 }
             }
         }
@@ -57,7 +62,8 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
                 _loginState.value.password
             )
         ).onSuccess {
-            _refreshToken.emit(it.refreshToken)
+            _refreshToken.trySend(it.refreshToken)
+            _userId.trySend(it.userId)
         }.onError { error ->
             if (error is DataError) {
                 _loginState.update { it.copy(errorMessage = error.toUiText()) }

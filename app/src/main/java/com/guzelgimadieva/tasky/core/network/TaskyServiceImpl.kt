@@ -1,5 +1,4 @@
 package com.guzelgimadieva.tasky.core.network
-import android.net.http.HttpResponseCache.install
 import com.guzelgimadieva.tasky.core.data.remote.model.LoginRequest
 import com.guzelgimadieva.tasky.core.data.remote.model.LoginResponse
 import com.guzelgimadieva.tasky.core.data.remote.model.RegisterRequest
@@ -25,10 +24,16 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.Response
-import java.util.logging.Logger
 import kotlin.coroutines.cancellation.CancellationException
 
 class TaskyServiceImpl: TaskyService {
+
+    var accessToken: String? = null
+        private set
+
+    fun invalidateCaches() {
+        accessToken = null
+    }
 
     private val client = HttpClient(OkHttp){
         install(Logging) {
@@ -64,9 +69,14 @@ class TaskyServiceImpl: TaskyService {
     }
 
     override suspend fun accessToken(accessTokenRequest: AccessTokenRequest): Result<AccessTokenResponse, Error> {
-        return safeCall {
+        return safeCall<AccessTokenResponse> {
             client.post(HttpRoutes.ACCESS_TOKEN){
                 setBody(accessTokenRequest)
+            }
+        }.also {
+            accessToken = when(it){
+                is Result.Success -> it.data.accessToken
+                else -> null
             }
         }
     }

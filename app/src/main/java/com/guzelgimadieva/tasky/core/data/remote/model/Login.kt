@@ -26,7 +26,7 @@ data class AccessTokenRequest(
 @Serializable
 data class AccessTokenResponse(
     val accessToken: String,
-    val accessTokenExpirationTimestamp: Long,
+    val expirationTimestamp: Long,
 )
 
 

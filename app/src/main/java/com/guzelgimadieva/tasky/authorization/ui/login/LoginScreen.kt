@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -90,11 +91,22 @@ fun LoginScreen(
     val viewModel: LoginScreenViewModel = hiltViewModel()
     val loginState by viewModel.loginState.collectAsState()
 
-    val refreshToken = viewModel.refreshToken.collectAsState()
     val context = LocalContext.current
-    val storedRefreshToken = context.getSharedPreferences(
-        context.getString(R.string.stored_access_token),
-        Context.MODE_PRIVATE)
+    val refreshToken = stringResource(id = R.string.stored_refresh_token)
+    val userId = stringResource(id = R.string.stored_user_id)
+    LaunchedEffect(viewModel.refreshToken) {
+        viewModel.refreshToken.collect { token ->
+            context.getSharedPreferences(refreshToken, Context.MODE_PRIVATE)
+                .edit().putString(refreshToken, token).apply()
+            }
+        }
+    LaunchedEffect(viewModel.userId) {
+        viewModel.userId.collect { id ->
+            context.getSharedPreferences(userId, Context.MODE_PRIVATE)
+                .edit().putString(userId, id).apply()
+        }
+    }
+
 
     LoginScreenContent(
         onAction = viewModel::onEvent,

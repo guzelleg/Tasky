@@ -11,5 +11,6 @@
     <string name="welcome_screen_register_link">SIGN UP</string>
     <string name="register_screen_title">Create your account</string>
     <string name="welcome_screen_getStarted_button">GET STARTED</string>
-    <string name="stored_access_token"></string>
+    <string name="stored_refresh_token">token_key</string>
+    <string name="stored_user_id">user_key</string>
 </resources>
