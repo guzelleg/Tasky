@@ -28,11 +28,12 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class TaskyServiceImpl: TaskyService {
 
-    var accessToken: String? = null
-        private set
+    private var accessToken: String? = null
+    var isLoggedIn = false
 
     fun invalidateCaches() {
         accessToken = null
+        isLoggedIn = false
     }
 
     private val client = HttpClient(OkHttp){
@@ -54,18 +55,18 @@ class TaskyServiceImpl: TaskyService {
 
     }
     override suspend fun register(registerRequest: RegisterRequest): Result<Response, DataError.Network> {
-        return safeCall {
+        return safeCall<Response> {
             client.post(HttpRoutes.REGISTER){
                 setBody(registerRequest)
             }
-        }
+        }.also { isLoggedIn = it is Result.Success }
     }
     override suspend fun login(loginRequest: LoginRequest): Result<LoginResponse, Error> {
-       return safeCall {
+       return safeCall<LoginResponse> {
             client.post(HttpRoutes.LOGIN){
                 setBody(loginRequest)
             }
-        }
+        }.also { isLoggedIn = it is Result.Success }
     }
 
     override suspend fun accessToken(accessTokenRequest: AccessTokenRequest): Result<AccessTokenResponse, Error> {

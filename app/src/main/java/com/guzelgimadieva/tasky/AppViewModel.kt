@@ -22,8 +22,7 @@ class AppViewModel @Inject constructor() : ViewModel() {
     init {
         service.invalidateCaches()
     }
-    var isLoading: Boolean = true
-        private set
+    private var isLoading: Boolean = true
 
     fun getAccessToken(
         refreshToken: String,
@@ -35,8 +34,9 @@ class AppViewModel @Inject constructor() : ViewModel() {
                     refreshToken,
                     userId,
                 )
-            ).onSuccess { response ->
+            ).onSuccess {
                 isLoading = false
+                service.isLoggedIn = true
                 _isLoggedIn.emit(true)
             }.onError {
                 isLoading = false

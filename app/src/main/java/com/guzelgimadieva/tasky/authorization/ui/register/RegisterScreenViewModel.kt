@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.guzelgimadieva.tasky.authorization.ui.utils.validateEmail
 import com.guzelgimadieva.tasky.core.data.remote.model.RegisterRequest
 import com.guzelgimadieva.tasky.core.network.TaskyServiceImpl
+import com.guzelgimadieva.tasky.core.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -65,6 +66,8 @@ class RegisterScreenViewModel @Inject constructor() : ViewModel() {
                 _registerState.value.email,
                 _registerState.value.password
             )
-        )
+        ).onSuccess {
+            service.isLoggedIn = true
+        }
     }
 }

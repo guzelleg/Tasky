@@ -57,32 +57,6 @@ import com.guzelgimadieva.tasky.core.theme.TaskyAppGreen
 import com.guzelgimadieva.tasky.core.theme.TaskyAppLightGray
 import com.guzelgimadieva.tasky.core.theme.TaskyAppPurple
 
-
-@Composable
-fun AuthorizationScreen(
-) {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = AuthScreen.LOGIN.name,
-    ) {
-        composable(AuthScreen.LOGIN.name) {
-            LoginScreen(
-                onRegisterClick = {
-                    navController.navigate(AuthScreen.REGISTER.name)
-                }
-            )
-        }
-        composable(AuthScreen.REGISTER.name) {
-            RegisterScreen(
-                onBackClick = {
-                    navController.navigate(AuthScreen.LOGIN.name)
-                }
-            )
-        }
-    }
-}
-
 @Composable
 fun LoginScreen(
     onRegisterClick: () -> Unit,

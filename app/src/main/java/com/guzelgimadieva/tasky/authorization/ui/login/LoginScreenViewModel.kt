@@ -64,6 +64,7 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
         ).onSuccess {
             _refreshToken.trySend(it.refreshToken)
             _userId.trySend(it.userId)
+            service.isLoggedIn = true
         }.onError { error ->
             if (error is DataError) {
                 _loginState.update { it.copy(errorMessage = error.toUiText()) }
