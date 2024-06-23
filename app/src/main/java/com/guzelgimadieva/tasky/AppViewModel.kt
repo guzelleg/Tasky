@@ -2,6 +2,7 @@ package com.guzelgimadieva.tasky
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.guzelgimadieva.tasky.core.data.local.UserPreferences
 import com.guzelgimadieva.tasky.core.data.remote.model.AccessTokenRequest
 import com.guzelgimadieva.tasky.core.network.TaskyServiceImpl
 import com.guzelgimadieva.tasky.core.network.onError
@@ -14,8 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AppViewModel @Inject constructor() : ViewModel() {
-    private val service = TaskyServiceImpl()
+class AppViewModel @Inject constructor(
+    private val service: TaskyServiceImpl,
+    private val userPreferences: UserPreferences,
+) : ViewModel() {
     private var _isLoggedIn = MutableStateFlow(false)
     internal val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
