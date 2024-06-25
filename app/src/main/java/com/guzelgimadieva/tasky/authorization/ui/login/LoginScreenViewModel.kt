@@ -3,12 +3,16 @@ package com.guzelgimadieva.tasky.authorization.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.guzelgimadieva.tasky.authorization.ui.utils.validateEmail
+import com.guzelgimadieva.tasky.core.data.local.UserPreferences
 import com.guzelgimadieva.tasky.core.data.remote.model.LoginRequest
+import com.guzelgimadieva.tasky.core.data.remote.model.local.AuthenticatedUser
 import com.guzelgimadieva.tasky.core.network.DataError
 import com.guzelgimadieva.tasky.core.network.DataError.Companion.toUiText
 import com.guzelgimadieva.tasky.core.network.TaskyServiceImpl
 import com.guzelgimadieva.tasky.core.network.onError
 import com.guzelgimadieva.tasky.core.network.onSuccess
+import com.guzelgimadieva.tasky.core.util.Auth
+import com.guzelgimadieva.tasky.core.util.AuthEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,16 +24,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor() : ViewModel() {
+class LoginScreenViewModel @Inject constructor(
+    private val service: TaskyServiceImpl,
+    private val userPreferences: UserPreferences,
+    private val authEvent: Auth,
+) : ViewModel() {
     private val _loginState = MutableStateFlow(LoginScreenState())
     val loginState: StateFlow<LoginScreenState> = _loginState.asStateFlow()
-    private val service = TaskyServiceImpl()
-
-    private val _refreshToken = Channel<String?>()
-    val refreshToken = _refreshToken.receiveAsFlow()
-
-    private val _userId = Channel<String>()
-    val userId = _userId.receiveAsFlow()
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -61,10 +62,14 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
                 _loginState.value.email,
                 _loginState.value.password
             )
-        ).onSuccess {
-            _refreshToken.trySend(it.refreshToken)
-            _userId.trySend(it.userId)
-            service.isLoggedIn = true
+        ).onSuccess { user ->
+            userPreferences.saveAuthenticatedUser(AuthenticatedUser(
+                user.userId,
+                _loginState.value.email,
+                user.accessToken,
+                user.refreshToken,
+            ))
+            authEvent.sendEvent(AuthEvent.LogIn)
         }.onError { error ->
             if (error is DataError) {
                 _loginState.update { it.copy(errorMessage = error.toUiText()) }

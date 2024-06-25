@@ -66,20 +66,6 @@ fun LoginScreen(
     val loginState by viewModel.loginState.collectAsState()
 
     val context = LocalContext.current
-    val refreshToken = stringResource(id = R.string.stored_refresh_token)
-    val userId = stringResource(id = R.string.stored_user_id)
-    LaunchedEffect(viewModel.refreshToken) {
-        viewModel.refreshToken.collect { token ->
-            context.getSharedPreferences(refreshToken, Context.MODE_PRIVATE)
-                .edit().putString(refreshToken, token).apply()
-            }
-        }
-    LaunchedEffect(viewModel.userId) {
-        viewModel.userId.collect { id ->
-            context.getSharedPreferences(userId, Context.MODE_PRIVATE)
-                .edit().putString(userId, id).apply()
-        }
-    }
 
 
     LoginScreenContent(

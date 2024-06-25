@@ -13,6 +13,7 @@ class UserPreferencesImpl(
             putString(UserPreferences.EMAIL, user.email)
             putString(UserPreferences.TOKEN, user.accessToken)
             putString(UserPreferences.REFRESH_TOKEN, user.refreshToken)
+            .apply()
         }
     }
 
@@ -30,7 +31,7 @@ class UserPreferencesImpl(
 
     override fun clearPreferences() {
         sharedPref.edit {
-            clear()
+            clear().apply()
         }
     }
 }

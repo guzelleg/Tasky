@@ -3,11 +3,16 @@ import com.guzelgimadieva.tasky.core.data.remote.model.LoginRequest
 import com.guzelgimadieva.tasky.core.data.remote.model.LoginResponse
 import com.guzelgimadieva.tasky.core.data.remote.model.RegisterRequest
 import com.guzelgimadieva.tasky.BuildConfig
+import com.guzelgimadieva.tasky.core.data.local.UserPreferences
 import com.guzelgimadieva.tasky.core.data.remote.model.AccessTokenRequest
 import com.guzelgimadieva.tasky.core.data.remote.model.AccessTokenResponse
+import com.guzelgimadieva.tasky.core.data.remote.model.local.AuthenticatedUser
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.Logger
@@ -24,17 +29,12 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.Response
+import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
-class TaskyServiceImpl: TaskyService {
-
-    private var accessToken: String? = null
-    var isLoggedIn = false
-
-    fun invalidateCaches() {
-        accessToken = null
-        isLoggedIn = false
-    }
+class TaskyServiceImpl @Inject constructor(
+    private val userPreferences: UserPreferences,
+): TaskyService {
 
     private val client = HttpClient(OkHttp){
         install(Logging) {
@@ -53,20 +53,69 @@ class TaskyServiceImpl: TaskyService {
             )
         }
 
+        install(Auth){
+            bearer {
+                loadTokens {
+                    val info = userPreferences.getAuthenticatedUser()
+                    BearerTokens(
+                        accessToken = info?.accessToken ?: "",
+                        refreshToken = info?.refreshToken ?: ""
+                    )
+                }
+                refreshTokens {
+                    val info = userPreferences.getAuthenticatedUser()
+                    val response = safeCall<AccessTokenResponse> {
+                        client.post(HttpRoutes.ACCESS_TOKEN) {
+                            setBody(
+                                AccessTokenRequest(
+                                    refreshToken = info?.refreshToken ?: "",
+                                    userId = info?.userId ?: ""
+                                )
+                            )
+                        }
+                    }
+                    if(response is Result.Success) {
+                        val newAuthInfo = AuthenticatedUser(
+                            accessToken = response.data.accessToken,
+                            refreshToken = info?.refreshToken ?: "",
+                            userId = info?.userId ?: "",
+                            email = info?.email ?: "",
+                        )
+                        userPreferences.saveAuthenticatedUser(newAuthInfo)
+
+                        BearerTokens(
+                            accessToken = newAuthInfo.accessToken,
+                            refreshToken = newAuthInfo.refreshToken
+                        )
+                    } else {
+                        BearerTokens(
+                            accessToken = "",
+                            refreshToken = ""
+                        )
+                    }
+                }
+            }
+        }
+
     }
     override suspend fun register(registerRequest: RegisterRequest): Result<Response, DataError.Network> {
-        return safeCall<Response> {
+        return safeCall {
             client.post(HttpRoutes.REGISTER){
                 setBody(registerRequest)
             }
-        }.also { isLoggedIn = it is Result.Success }
+        }
     }
     override suspend fun login(loginRequest: LoginRequest): Result<LoginResponse, Error> {
-       return safeCall<LoginResponse> {
+       val response = safeCall<LoginResponse> {
             client.post(HttpRoutes.LOGIN){
                 setBody(loginRequest)
             }
-        }.also { isLoggedIn = it is Result.Success }
+        }
+
+        if(response is Result.Success) userPreferences.saveAuthenticatedUser(
+            response.data.toAuthenticatedUser())
+
+        return response
     }
 
     override suspend fun accessToken(accessTokenRequest: AccessTokenRequest): Result<AccessTokenResponse, Error> {
@@ -74,13 +123,9 @@ class TaskyServiceImpl: TaskyService {
             client.post(HttpRoutes.ACCESS_TOKEN){
                 setBody(accessTokenRequest)
             }
-        }.also {
-            accessToken = when(it){
-                is Result.Success -> it.data.accessToken
-                else -> null
-            }
         }
     }
+
 
     private suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Result<T, DataError.Network> {
         val response = try {

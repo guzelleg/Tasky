@@ -10,6 +10,5 @@ import okhttp3.Response
 interface TaskyService {
     suspend fun register(registerRequest: RegisterRequest): Result<Response, DataError.Network>
     suspend fun login(loginRequest: LoginRequest): Result<LoginResponse, Error>
-
     suspend fun accessToken(accessTokenRequest: AccessTokenRequest): Result<AccessTokenResponse, Error>
 }
