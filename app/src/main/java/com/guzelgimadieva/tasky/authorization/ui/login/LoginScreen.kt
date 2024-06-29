@@ -2,6 +2,7 @@
 
 package com.guzelgimadieva.tasky.authorization.ui.login
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,11 +28,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -54,38 +57,17 @@ import com.guzelgimadieva.tasky.core.theme.TaskyAppGreen
 import com.guzelgimadieva.tasky.core.theme.TaskyAppLightGray
 import com.guzelgimadieva.tasky.core.theme.TaskyAppPurple
 
-
-@Composable
-fun AuthorizationScreen(
-) {
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = AuthScreen.LOGIN.name,
-    ) {
-        composable(AuthScreen.LOGIN.name) {
-            LoginScreen(
-                onRegisterClick = {
-                    navController.navigate(AuthScreen.REGISTER.name)
-                }
-            )
-        }
-        composable(AuthScreen.REGISTER.name) {
-            RegisterScreen(
-                onBackClick = {
-                    navController.navigate(AuthScreen.LOGIN.name)
-                }
-            )
-        }
-    }
-}
-
 @Composable
 fun LoginScreen(
     onRegisterClick: () -> Unit,
 ) {
+
     val viewModel: LoginScreenViewModel = hiltViewModel()
     val loginState by viewModel.loginState.collectAsState()
+
+    val context = LocalContext.current
+
+
     LoginScreenContent(
         onAction = viewModel::onEvent,
         loginState = loginState,
